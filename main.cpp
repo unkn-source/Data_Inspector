@@ -13,6 +13,7 @@
 #include <string>
 #include <unordered_map>
 #include <sys/stat.h>
+#include <jpeglib.h>
 #include <ctime>
 
 extern "C" {
@@ -109,14 +110,16 @@ double calculateA1SizeWidth(const std::string& imagePath) {
         return 0.0;
     }
 
-    const double dpi = 300.0;
+    FIBITMAP* image_2 = FreeImage_Load(FIF_JPEG, imagePath.c_str(), JPEG_DEFAULT);
+    unsigned xDpi = FreeImage_GetDotsPerMeterX(image_2) / 39.3701;
+
     const double mmPerInch = 25.4;
 
     double widthPixels = image.cols;
     double heightPixels = image.rows;
 
-    double widthInches = widthPixels / dpi;
-    double heightInches = heightPixels / dpi;
+    double widthInches = widthPixels / xDpi;
+    double heightInches = heightPixels / xDpi;
 
     double widthA1 = widthInches * mmPerInch / 841.0;
     double heightA1 = heightInches * mmPerInch / 594.0;
@@ -127,14 +130,16 @@ double calculateA1SizeWidth(const std::string& imagePath) {
 double calculateA1SizeHeight(const std::string& imagePath) {
     cv::Mat image = cv::imread(imagePath);
 
-    const double dpi = 300.0;
+    FIBITMAP* image_2 = FreeImage_Load(FIF_JPEG, imagePath.c_str(), JPEG_DEFAULT);
+    unsigned xDpi = FreeImage_GetDotsPerMeterX(image_2) / 39.3701;
+
     const double mmPerInch = 25.4;
 
     double widthPixels = image.cols;
     double heightPixels = image.rows;
 
-    double widthInches = widthPixels / dpi;
-    double heightInches = heightPixels / dpi;
+    double widthInches = widthPixels / xDpi;
+    double heightInches = heightPixels / xDpi;
 
     double widthA1 = widthInches * mmPerInch / 841.0;
     double heightA1 = heightInches * mmPerInch / 594.0;
@@ -150,6 +155,7 @@ double calculateGifA1Width(const std::string& imagePath) {
     }
 
     const double dpi = 300.0;
+
     const double mmPerInch = 25.4;
     const double A1Width_mm = 841.0;
 
@@ -169,6 +175,7 @@ double calculateGifA1Height(const std::string& imagePath) {
         return -1.0;
     }
 
+    
     const double dpi = 300.0;
     const double mmPerInch = 25.4;
     const double A1Height_mm = 594.0;
@@ -324,5 +331,8 @@ int main() {
     std::cout << "--------------------------------------------------------------------------------------------------------------------" << std::endl;
 
     std::cout << RESET_COLOR;
+
+    system("pause");
+
     return 0;
 }
